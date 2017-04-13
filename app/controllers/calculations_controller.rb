@@ -11,13 +11,23 @@ class CalculationsController < ApplicationController
     # ================================================================================
 
 
-    @word_count = "Replace this string with your answer."
 
-    @character_count_with_spaces = "Replace this string with your answer."
+    @character_count_with_spaces = @text.length
 
-    @character_count_without_spaces = "Replace this string with your answer."
+    text_wo_spaces = @text.gsub(" ", "")
+    text_wo_linefeed = text_wo_spaces.gsub("\n","")
+    text_wo_carriage_return = text_wo_linefeed.gsub("\r", "")
+    text_wo_tabs = text_wo_carriage_return.gsub("\t","")
 
-    @occurrences = "Replace this string with your answer."
+    @character_count_without_spaces = text_wo_tabs.length
+
+    @word_count = @text.split.length
+
+    input_text_downcase = @text.downcase.gsub(/[^a-z ]/, '')
+
+    input_text_split = input_text_downcase.split
+
+    @occurrences = input_text_split.count(@special_word.downcase.gsub(/[^a-z ]/, ''))
 
     # ================================================================================
     # Your code goes above.
@@ -38,7 +48,11 @@ class CalculationsController < ApplicationController
     # The principal value the user input is in the decimal @principal.
     # ================================================================================
 
-    @monthly_payment = "Replace this string with your answer."
+    apr_monthly = (@apr/100) / 12
+
+    months = @years * 12
+
+    @monthly_payment = (apr_monthly * @principal) / (1 - (1+apr_monthly)**-months)
 
     # ================================================================================
     # Your code goes above.
@@ -60,12 +74,12 @@ class CalculationsController < ApplicationController
     #   number of seconds as a result.
     # ================================================================================
 
-    @seconds = "Replace this string with your answer."
-    @minutes = "Replace this string with your answer."
-    @hours = "Replace this string with your answer."
-    @days = "Replace this string with your answer."
-    @weeks = "Replace this string with your answer."
-    @years = "Replace this string with your answer."
+    @seconds = @ending - @starting
+    @minutes = (@ending - @starting)/60
+    @hours = ((@ending - @starting)/60)/60
+    @days = (((@ending - @starting)/60)/60)/24
+    @weeks = ((((@ending - @starting)/60)/60)/24)/7
+    @years = ((((@ending - @starting)/60)/60)/24)/365.25
 
     # ================================================================================
     # Your code goes above.
@@ -82,27 +96,38 @@ class CalculationsController < ApplicationController
     # The numbers the user input are in the array @numbers.
     # ================================================================================
 
-    @sorted_numbers = "Replace this string with your answer."
+    @sorted_numbers = @numbers.sort
+    @count = @numbers.length
 
-    @count = "Replace this string with your answer."
+    @minimum = @numbers.min
 
-    @minimum = "Replace this string with your answer."
+    @maximum = @numbers.max
 
-    @maximum = "Replace this string with your answer."
+    @range = @numbers.max - @numbers.min
 
-    @range = "Replace this string with your answer."
+    @median = (@sorted_numbers[(@numbers.length - 1)/2] + @sorted_numbers[@numbers.length/2])/2
 
-    @median = "Replace this string with your answer."
+    @sum = @numbers.sum
 
-    @sum = "Replace this string with your answer."
+    @mean = @numbers.sum / @numbers.length
 
-    @mean = "Replace this string with your answer."
+    variance_array = @numbers.map { |i| (i - (@numbers.sum / @numbers.length))**2}
 
-    @variance = "Replace this string with your answer."
+    @variance = variance_array.sum / @numbers.length
 
-    @standard_deviation = "Replace this string with your answer."
+    @standard_deviation = Math.sqrt(@variance)
 
-    @mode = "Replace this string with your answer."
+    unique_values = @numbers.uniq #b
+
+    unique_values_count = unique_values.map {|i| [i, @numbers.count(i)]} #c
+
+    top_unique_values = unique_values_count.sort_by {|_,cnt| -cnt} #d
+
+    ranked_mode_array = top_unique_values.take_while {|_,cnt| cnt == top_unique_values.first.last} #e
+
+    ranked_array = ranked_mode_array.map(&:first) #f
+
+    @mode = ranked_array[0]
 
     # ================================================================================
     # Your code goes above.
